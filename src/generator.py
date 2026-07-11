@@ -23,6 +23,8 @@ class Generator:
         self.path_network_A = path_network_A
         self.path_network_B = path_network_B
 
+        random.seed(1234)
+
     def gen_networks(
         self,
         min_air_quality: float = 10,
