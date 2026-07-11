@@ -5,13 +5,23 @@ from .json_utils import write_json
 
 
 class Generator:
-    def __init__(self, cities: list[str], start_date: date, end_date: date) -> None:
+    def __init__(
+        self,
+        cities: list[str],
+        start_date: date,
+        end_date: date,
+        path_network_A: str,
+        path_network_B: str,
+    ) -> None:
         self.cities = cities
 
         self.start_date = start_date
         self.end_date = end_date
 
         self.date_range = pd.date_range(start_date, end_date, freq="D")
+
+        self.path_network_A = path_network_A
+        self.path_network_B = path_network_B
 
     def gen_networks(
         self,
@@ -32,19 +42,18 @@ class Generator:
         self._delete_city(network_B)
 
         # persist data
-        write_json("data/network_A.json", network_A)
-        write_json("data/network_B.json", network_B)
+        write_json(self.path_network_A, network_A)
+        write_json(self.path_network_B, network_B)
 
     def _gen_network_A(
         self, min_air_quality: float = 10, max_air_quality: float = 70
     ) -> dict:
-        range_air_quality = max_air_quality - min_air_quality
         network_A = {}
         for city in self.cities:
             sensor_A = {}
             for date in self.date_range:
-                sensor_A[str(date)] = (
-                    min_air_quality + range_air_quality * random.random()
+                sensor_A[str(date)] = self._gen_rand_var(
+                    min_air_quality, max_air_quality
                 )
             network_A[city] = sensor_A
         return network_A
